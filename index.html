@@ -8023,12 +8023,13 @@
         day: ks2.currentDay || 1,
         reason: infraction.label,
         icon: infraction.icon,
-        pts: infraction.pts
+        pts: -infraction.pts
       };
-      const buckDeduction = infraction.pts / 33;
-      const newBucks = Math.max(0, (ks2.bucks || 0) - buckDeduction);
+      const newTotalPts = Math.max(0, (ks2.totalPts || 0) - infraction.pts);
+      const newBucks = newTotalPts / BUCK_RATE;
       const newDeductions = [...ks2.deductions || [], entry];
       setState((s) => __spreadProps(__spreadValues({}, s), { kids: __spreadProps(__spreadValues({}, s.kids), { [kidId]: __spreadProps(__spreadValues({}, s.kids[kidId]), {
+        totalPts: newTotalPts,
         bucks: newBucks,
         deductions: newDeductions
       }) }) }));
@@ -8036,8 +8037,6 @@
     }
     function applyGrade(kidId, entry) {
       const ks2 = state.kids[kidId];
-      const buckChange = entry.pts / 33;
-      const newBucks = Math.max(0, (ks2.bucks || 0) + buckChange);
       const deductEntry = {
         date: (/* @__PURE__ */ new Date()).toLocaleDateString(),
         day: ks2.currentDay || 1,
@@ -8045,8 +8044,11 @@
         icon: entry.icon,
         pts: entry.pts
       };
+      const newTotalPts = Math.max(0, (ks2.totalPts || 0) + entry.pts);
+      const newBucks = newTotalPts / BUCK_RATE;
       const newDeductions = [...ks2.deductions || [], deductEntry];
       setState((s) => __spreadProps(__spreadValues({}, s), { kids: __spreadProps(__spreadValues({}, s.kids), { [kidId]: __spreadProps(__spreadValues({}, s.kids[kidId]), {
+        totalPts: newTotalPts,
         bucks: newBucks,
         deductions: newDeductions
       }) }) }));
